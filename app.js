@@ -16,11 +16,12 @@ const Patient = require("./models/patient");
 var app = express();
 app.use(cors({
       origin: "https://mediverse-sigma.vercel.app"
-}));  
+})); 
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(logger('dev'));
 
 app.use(expressSession({
       resave:false,
@@ -28,20 +29,18 @@ app.use(expressSession({
       secret:"hey hey hey"
 
 }))
-
+/* Passport config */
 app.use(passport.initialize());
 app.use(passport.session());
-
-/* Passport config */
 passport.use(new LocalStrategy(Patient.authenticate()));
 
 passport.serializeUser(Patient.serializeUser());
 passport.deserializeUser(Patient.deserializeUser());
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
