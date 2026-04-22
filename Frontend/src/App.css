@@ -1,0 +1,148 @@
+.page {
+  min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 12px;
+background: linear-gradient(135deg,#7bbd9b, #8ebbab);
+/* padding: 20px; */
+}
+.card {
+width: 100%;
+max-width: 1100px;
+background: #d4dfda;
+border-radius: 20px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+overflow: hidden;
+}
+
+
+.left {
+background: linear-gradient(160deg, #6ee7b7, #00d084);
+color: #0e4513;
+padding: 50px;
+}
+
+
+.brand {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+/* .logo {
+width: 42px;
+height: 42px;
+border-radius: 12px;
+background: rgba(255,255,255,0.25);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 42px;
+font-weight: bold;
+} */
+ .logo img {
+  width: 8vw;
+  height: 8vw;
+  object-fit: contain;
+}
+
+
+
+.subtitle { margin: 16px 0 30px; opacity: 0.95; }
+
+
+.features { list-style: none; padding: 0; }
+.features li { margin-bottom: 18px; font-weight: 900; }
+.features span { display: block; font-weight: 400; opacity: 0.9; }
+
+
+.right {
+padding: 50px 40px;
+}
+
+
+.toggle {
+display: flex;
+background: #ecfdf5;
+border-radius: 30px;
+margin-bottom: 30px;
+}
+
+
+.toggle button {
+flex: 1;
+padding: 12px;
+border: none;
+background: transparent;
+border-radius: 30px;
+cursor: pointer;
+font-weight: 600;
+}
+
+
+.toggle .active {
+background: #00d084;
+color: #fff;
+}
+
+
+input {
+width: 100%;
+padding: 14px;
+margin: 12px 0;
+border-radius: 12px;
+border: 1px solid #d1fae5;
+outline: none;
+}
+
+
+.primary {
+width: 100%;
+margin-top: 20px;
+padding: 14px;
+border-radius: 14px;
+border: none;
+background: linear-gradient(90deg, #00d084, #00c37a);
+color: #fff;
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+}
+
+
+.row { text-align: right; }
+
+
+/* .link { color: #00a86b; cursor: pointer; font-size: 14px; } */
+
+
+.bottom { text-align: center; margin-top: 24px; }
+.bottom span { color: #00a86b; cursor: pointer; font-weight: 600; }
+
+
+@media (max-width: 900px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .left {
+    display: block;
+    padding: 30px 25px;
+    text-align: center;
+  }
+
+  .brand {
+    justify-content: center;
+  }
+
+  .features {
+    display: none; /* hide feature list to save space */
+  }
+
+  .right {
+    padding: 30px 25px;
+  }
+}
+
