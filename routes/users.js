@@ -55,13 +55,12 @@ router.post("/patient/login", async (req, res) => {
     if (!patient)
       return res.status(401).json({ message: "No account found with this email" });
 
-    // passport-local-mongoose instance method
-    patient.authenticate(password, (err, result) => {
+    patient.authenticate(password, (err, user) => {  // ← named 'user' here
       if (err) {
         console.error("AUTH ERROR:", err);
         return res.status(500).json({ message: "Server error" });
       }
-      if (!result) {
+      if (!user) {  // ← now matches
         return res.status(401).json({ message: "Incorrect password" });
       }
 
@@ -82,6 +81,7 @@ router.post("/patient/login", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
 
 router.post("/hospital/register", async (req, res) => {
   console.log("HOSPITAL REGISTER BODY:", req.body);
@@ -124,12 +124,12 @@ router.post("/hospital/login", async (req, res) => {
     if (!hospital)
       return res.status(401).json({ message: "No account found with this email" });
 
-    hospital.authenticate(password, (err, result) => {
+    hospital.authenticate(password, (err, user) => {  // ← named 'user' here
       if (err) {
         console.error("AUTH ERROR:", err);
         return res.status(500).json({ message: "Server error" });
       }
-      if (!result) {
+      if (!user) {  // ← now matches
         return res.status(401).json({ message: "Incorrect password" });
       }
 
@@ -150,7 +150,6 @@ router.post("/hospital/login", async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
-
 /*GET /api/auth/me*/
 router.get("/me", (req, res) => {
   const header = req.headers.authorization;
