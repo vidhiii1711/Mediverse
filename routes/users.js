@@ -25,24 +25,62 @@ router.post("/patient/register", async (req, res) => {
 });
 
 /*PATIENT LOGIN*/
-router.post("/patient/login", (req, res) => {
-  Patient.authenticate()(req.body.email, req.body.password, (err, patient, info) => {
-    if (err) return res.status(500).json({ message: "Server error" });
-    if (!patient) return res.status(401).json({ message: info.message });
+// router.post("/patient/login", (req, res) => {
+//   Patient.authenticate()(req.body.email, req.body.password, (err, patient, info) => {
+//     if (err) return res.status(500).json({ message: "Server error" });
+//     if (!patient) return res.status(401).json({ message: info.message });
 
-    // ✅ Generate JWT token
-    const token = jwt.sign(
-      { id: patient._id, role: "patient", name: patient.name },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+//     // ✅ Generate JWT token
+//     const token = jwt.sign(
+//       { id: patient._id, role: "patient", name: patient.name },
+//       JWT_SECRET,
+//       { expiresIn: "7d" }
+//     );
 
-    return res.json({
-      success: true,
-      token,
-      patient: { id: patient._id, name: patient.name, email: patient.email }
+//     return res.json({
+//       success: true,
+//       token,
+//       patient: { id: patient._id, name: patient.name, email: patient.email }
+//     });
+//   });
+// });
+router.post("/patient/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res.status(400).json({ message: "All fields required" });
+
+  try {
+    const patient = await Patient.findOne({ email });
+    if (!patient)
+      return res.status(401).json({ message: "No account found with this email" });
+
+    // passport-local-mongoose instance method
+    patient.authenticate(password, (err, result) => {
+      if (err) {
+        console.error("AUTH ERROR:", err);
+        return res.status(500).json({ message: "Server error" });
+      }
+      if (!result) {
+        return res.status(401).json({ message: "Incorrect password" });
+      }
+
+      const token = jwt.sign(
+        { id: patient._id, role: "patient", name: patient.name },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      return res.json({
+        success: true,
+        token,
+        patient: { id: patient._id, name: patient.name, email: patient.email },
+      });
     });
-  });
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
 });
 
 router.post("/hospital/register", async (req, res) => {
@@ -60,20 +98,57 @@ router.post("/hospital/register", async (req, res) => {
 });
 
 /*HOSPITAL LOGIN*/
-router.post("/hospital/login", (req, res) => {
-  Hospital.authenticate()(req.body.email, req.body.password, (err, hospital, info) => {
-    if (err)       return res.status(500).json({ message: "Server error" });
-    if (!hospital) return res.status(401).json({ message: info.message });
-    const token = jwt.sign(
-      { id: hospital._id, role: "hospital", name: hospital.name },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-    return res.json({
-      success: true, token,
-      hospital: { id: hospital._id, name: hospital.name, email: hospital.email }
+// router.post("/hospital/login", (req, res) => {
+//   Hospital.authenticate()(req.body.email, req.body.password, (err, hospital, info) => {
+//     if (err)       return res.status(500).json({ message: "Server error" });
+//     if (!hospital) return res.status(401).json({ message: info.message });
+//     const token = jwt.sign(
+//       { id: hospital._id, role: "hospital", name: hospital.name },
+//       JWT_SECRET,
+//       { expiresIn: "7d" }
+//     );
+//     return res.json({
+//       success: true, token,
+//       hospital: { id: hospital._id, name: hospital.name, email: hospital.email }
+//     });
+//   });
+// });
+router.post("/hospital/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res.status(400).json({ message: "All fields required" });
+
+  try {
+    const hospital = await Hospital.findOne({ email });
+    if (!hospital)
+      return res.status(401).json({ message: "No account found with this email" });
+
+    hospital.authenticate(password, (err, result) => {
+      if (err) {
+        console.error("AUTH ERROR:", err);
+        return res.status(500).json({ message: "Server error" });
+      }
+      if (!result) {
+        return res.status(401).json({ message: "Incorrect password" });
+      }
+
+      const token = jwt.sign(
+        { id: hospital._id, role: "hospital", name: hospital.name },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      return res.json({
+        success: true,
+        token,
+        hospital: { id: hospital._id, name: hospital.name, email: hospital.email },
+      });
     });
-  });
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
 });
 
 /*GET /api/auth/me*/
