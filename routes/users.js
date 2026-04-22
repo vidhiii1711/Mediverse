@@ -49,6 +49,10 @@ router.post("/patient/login", async (req, res) => {
 
   if (!email || !password)
     return res.status(400).json({ message: "All fields required" });
+    const mongoose = require("mongoose");
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: "Database not ready, try again in a moment" });
+  }
 
   try {
     const patient = await Patient.findOne({ email });
@@ -118,6 +122,11 @@ router.post("/hospital/login", async (req, res) => {
 
   if (!email || !password)
     return res.status(400).json({ message: "All fields required" });
+  const mongoose = require("mongoose");
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: "Database not ready, try again in a moment" });
+  }
+
 
   try {
     const hospital = await Hospital.findOne({ email });
