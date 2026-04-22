@@ -14,7 +14,9 @@ const Patient = require("./models/patient");
 
 
 var app = express();
-app.use(cors());  
+app.use(cors({
+      origin: "https://mediverse-sigma.vercel.app"
+}));  
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
