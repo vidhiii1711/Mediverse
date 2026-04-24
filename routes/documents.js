@@ -1,9 +1,9 @@
-const express   = require("express");
-const router    = express.Router();
-const jwt       = require("jsonwebtoken");
-const multer    = require("multer");
+const express    = require("express");
+const router     = express.Router();
+const jwt        = require("jsonwebtoken");
+const multer     = require("multer");
 const cloudinary = require("cloudinary").v2;
-const Document  = require("../models/documents");
+const Document   = require("../models/document");
 
 const JWT_SECRET = process.env.JWT_SECRET || "mediverse-secret";
 
@@ -13,20 +13,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "mediverse-documents",
-    allowed_formats: ["jpg", "jpeg", "png", "pdf", "heic", "heif", "webp"],
-    resource_type: "auto",
-  },
-});
-
+// Memory storage — buffer uploaded directly to Cloudinary
 const upload = multer({
-  storage:multer.memoryStorage(),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },
 });
-
 function auth(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ message: "No token" });
