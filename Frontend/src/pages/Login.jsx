@@ -115,7 +115,7 @@ export default function Login() {
             Sign In
           </button>
 
-          <p className="bottom" onClick={() => navigate("/register")}>
+         <p className="bottom" onClick={() => navigate(`/register?mode=${mode}`)}>
             Don’t have an account? <span>Sign up now</span>
           </p>
         </div>
