@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import '../App.css'
 import logo from "../assets/logo.png";
@@ -6,9 +6,10 @@ import logo from "../assets/logo.png";
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [mode, setMode] = useState("patient");
+  const [password, setPassword] = useState(searchParams.get("mode") || "patient");
+  const [mode, setMode] = useState();
   const navigate = useNavigate();
+const [searchParams] = useSearchParams();
 
 
   useEffect(() => {
