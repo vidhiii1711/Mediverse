@@ -105,6 +105,21 @@ export default function DashboardLayout({ children, user }) {
 
   return (
     <div className="mv-shell">
+      {serverSlow && (
+  <div style={{
+    position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999,
+    background: "var(--amber)", color: "#fff",
+    padding: "10px 20px", textAlign: "center",
+    fontSize: "13px", fontWeight: 500,
+    display: "flex", alignItems: "center", justifyContent: "center", gap: "10px"
+  }}>
+    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"
+      viewBox="0 0 24 24" style={{animation:"spin 1s linear infinite"}}>
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+    </svg>
+    Please wait a moment — server is starting up, this may take 30–60 seconds...
+  </div>
+)}
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="mv-overlay" onClick={() => setSidebarOpen(false)} />
@@ -194,10 +209,6 @@ export default function DashboardLayout({ children, user }) {
 
           <div className="mv-topbar-greeting">
             {getGreeting()}, <strong>{user?.name?.split(" ")[0] || "there"}</strong> 👋
-          </div>
-
-          <div className="mv-topbar-avatar">
-            <div className="mv-avatar-circle">{initials}</div>
           </div>
         </header>
 
