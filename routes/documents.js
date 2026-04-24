@@ -43,7 +43,22 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+   fileFilter: (req, file, cb) => {
+    // Accept all common mobile formats
+    const allowed = [
+      "application/pdf",
+      "image/jpeg", "image/jpg", "image/png",
+      "image/heic", "image/heif", // iPhone formats
+      "image/webp",
+    ];
+    if (allowed.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("File type not supported"), false);
+    }
+  },
+});
 });
 
 // ─── GET /api/documents
