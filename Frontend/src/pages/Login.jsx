@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-const [loading, setLoading] = useState(false);
 import '../App.css'
 import logo from "../assets/logo.png";
 
 export default function Login() {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState("patient"); // patient | hospital
