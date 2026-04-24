@@ -77,20 +77,24 @@ export default function Register() {
         <div className="right">
           <h2>Create Account</h2>
           <p className="hint">Join Mediverse for better healthcare access.</p>
+           <div className="toggle" key={mode}>
           <div className="toggle">
             <button
               className={mode === "patient" ? "active" : ""}
               onClick={() => setMode("patient")}
+               type="button"
             >
               Patient Login
             </button>
             <button
               className={mode === "hospital" ? "active" : ""}
               onClick={() => setMode("hospital")}
+               type="button"
             >
               Hospital Login
             </button>
           </div>
+           </div>
 
           <input type="text" name="name" placeholder="Name" value={name}
             onChange={(e) => setName(e.target.value)} />
