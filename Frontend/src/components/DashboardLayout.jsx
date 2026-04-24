@@ -2,7 +2,6 @@ import { useState,useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./DashboardLayout.css";
 import logo from "../assets/logo.png"; 
-const [serverSlow, setServerSlow] = useState(false);
 
 const navItems = [
   {
@@ -74,6 +73,7 @@ const settingsItems = [
 ];
 
 export default function DashboardLayout({ children, user }) {
+  const [serverSlow, setServerSlow] = useState(false);
   useEffect(() => {
   let timer;
   // Check if server responds within 2 seconds
