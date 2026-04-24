@@ -24,7 +24,7 @@ const storage = new CloudinaryStorage({
 });
 
 const upload = multer({
-  storage,
+  storage:multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },
 });
 
@@ -55,17 +55,26 @@ router.post("/upload", auth, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-    const title = req.body.title || req.file.originalname;
-    const serverUrl = process.env.SERVER_URL || "https://mediverse-0gys.onrender.com";
-    const fileUrl   = `${serverUrl}/uploads/${req.file.filename}`;
+   const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "mediverse-documents",
+          resource_type: "auto",  // handles PDFs and images
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
 
     const doc = await Document.create({
-      patient:    req.user.id,
-      title,
-      name:       req.file.originalname,
-      size:       req.body.size || `${Math.round(req.file.size / 1024)} KB`,
-      url:        req.file.path,
-      uploadedAt: new Date(),
+      patient: req.user.id,
+      name:    req.body.name || req.file.originalname || "Document",
+      size:    `${(req.file.size / 1024).toFixed(0)} KB`,
+      type:    req.body.type || "other",
+      url:     uploadResult.secure_url,  // ← permanent https:// Cloudinary URL
     });
 
     res.status(201).json({ document: doc });
