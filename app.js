@@ -16,15 +16,16 @@ var app = express();
 // ✅ CORS — must be first, before everything
 
 app.use(cors({
-  origin: "*",
+  origin:  [
+    "https://mediverse-sigma.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:3000"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"]
+  credentials: true
 }));
-app.options("*", cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.options("*", cors());
 // ✅ Body parsers — before routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
