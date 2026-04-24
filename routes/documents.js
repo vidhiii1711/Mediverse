@@ -1,14 +1,33 @@
-const express  = require("express");
-const router   = express.Router();
-const jwt      = require("jsonwebtoken");
-const multer   = require("multer");
-const path     = require("path");
-const fs       = require("fs");
-const Document = require("../models/documents");
+const express   = require("express");
+const router    = express.Router();
+const jwt       = require("jsonwebtoken");
+const multer    = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const Document  = require("../models/document");
 
 const JWT_SECRET = process.env.JWT_SECRET || "mediverse-secret";
 
-// ─── Auth middleware
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "mediverse-documents",
+    allowed_formats: ["jpg", "jpeg", "png", "pdf", "heic", "heif", "webp"],
+    resource_type: "auto",
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 50 * 1024 * 1024 },
+});
+
 function auth(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ message: "No token" });
@@ -19,46 +38,6 @@ function auth(req, res, next) {
     res.status(401).json({ message: "Invalid token" });
   }
 }
-
-// ─── Multer storage setup
-// Files are stored in MEDIVERSE/public/uploads/
-const uploadDir = path.join(__dirname, "../public/uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename:    (req, file, cb) => {
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1e6);
-    const ext    = path.extname(file.originalname);
-    cb(null, unique + ext);
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  const allowed = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
-  if (allowed.includes(file.mimetype)) cb(null, true);
-  else cb(new Error("Only PDF, JPG, and PNG files are allowed."), false);
-};
-
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
-   fileFilter: (req, file, cb) => {
-    // Accept all common mobile formats
-    const allowed = [
-      "application/pdf",
-      "image/jpeg", "image/jpg", "image/png",
-      "image/heic", "image/heif", // iPhone formats
-      "image/webp",
-    ];
-    if (allowed.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("File type not supported"), false);
-    }
-  },
-});
 
 // ─── GET /api/documents
 router.get("/", auth, async (req, res) => {
@@ -85,7 +64,7 @@ router.post("/upload", auth, upload.single("file"), async (req, res) => {
       title,
       name:       req.file.originalname,
       size:       req.body.size || `${Math.round(req.file.size / 1024)} KB`,
-      url:        fileUrl,
+      url:        req.file.path,
       uploadedAt: new Date(),
     });
 
