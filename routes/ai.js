@@ -5,7 +5,7 @@ const multer  = require("multer");
 
 const JWT_SECRET = process.env.JWT_SECRET    || "mediverse-secret";
 const GEMINI_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
 
 function auth(req, res, next) {
   const header = req.headers.authorization;
