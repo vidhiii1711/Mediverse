@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+const [loading, setLoading] = useState(false);
 import '../App.css'
 import logo from "../assets/logo.png";
 
@@ -14,6 +15,7 @@ export default function Login() {
   const isHospital = mode === "hospital";
 
   const handleLogin = async () => {
+     setLoading(true); 
     console.log("MODE BEFORE API CALL =", mode);
 
     const endpoint =
@@ -47,7 +49,9 @@ export default function Login() {
     } catch (err) {
       console.error(err);
       alert("Backend not reachable");
-    }
+    }finally {
+    setLoading(false);
+  }
   };
 
   return (
@@ -111,8 +115,8 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button type="button" className="primary" onClick={handleLogin}>
-            Sign In
+          <button type="button" className="primary" onClick={handleLogin} disabled={loading}>
+  {loading ? "Connecting... (first load may take 30s)" : "Sign In"}
           </button>
 
          <p className="bottom" onClick={() => navigate(`/register?mode=${mode}`)}>
