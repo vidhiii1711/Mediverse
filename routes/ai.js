@@ -130,18 +130,25 @@ router.post("/chat", auth, upload.single("file"), async (req, res) => {
       ],
     };
 let gRes, gData;
-for (const model of GEMINI_MODELS) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`;
-  gRes = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  gData = await gRes.json();
-  if (gRes.ok) break;
-  console.log(`Model ${model} failed:`, gData?.error?.message);
-}
-if (!gRes.ok) throw new Error(gData?.error?.message || "All models unavailable");
-const raw = gData.candidates?.[0]?.content?.parts?.[0]?.text || "I could not generate a response. Please try again.";
-res.json({ reply: formatHtml(raw) });
+    for (const model of GEMINI_MODELS) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`;
+      gRes = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      gData = await gRes.json();
+      if (gRes.ok) break;
+      console.log(`Model ${model} failed:`, gData?.error?.message);
+    }
+    if (!gRes.ok) throw new Error(gData?.error?.message || "All models unavailable");
+    const raw = gData.candidates?.[0]?.content?.parts?.[0]?.text || "I could not generate a response. Please try again.";
+    res.json({ reply: formatHtml(raw) });
+
+  } catch (err) {
+    console.error("AI error:", err.message);
+    res.status(500).json({ reply: "Sorry, I am having trouble right now. Please try again in a moment." });
+  }
+});
+
 module.exports = router;
