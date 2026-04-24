@@ -4,6 +4,7 @@ import '../App.css'
 import logo from "../assets/logo.png";
 
 export default function Register() {
+   const [loading, setLoading] = useState(false);
    const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [name, setName] = useState("");
@@ -18,6 +19,7 @@ export default function Register() {
 
 
   const handleRegister = async () => {
+     setLoading(true);
     try {
       const endpoint =
         mode === "patient"
@@ -41,9 +43,10 @@ export default function Register() {
     catch (err) {
       console.error(err);
       alert("Server error");
-    }
-
-  };
+    } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="page">
@@ -103,7 +106,8 @@ export default function Register() {
           <input type="password" name="password" placeholder="Password" value={password}
             onChange={(e) => setPassword(e.target.value)} />
 
-          <button className="primary" onClick={handleRegister}>Sign Up</button>
+          <button className="primary" onClick={handleRegister} disabled={loading}>
+  {loading ? "Please wait... (server waking up)" : "Sign Up"}</button>
 
           <p className="bottom" onClick={() => navigate("/")}>
             Already have an account? <span>Login</span>
