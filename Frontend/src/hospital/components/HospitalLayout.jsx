@@ -1,25 +1,7 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useHospital } from "../context/HospitalContext";
 import "./HospitalLayout.css";
-const [serverSlow, setServerSlow] = useState(false);
-
-useEffect(() => {
-  let timer;
-  // Check if server responds within 2 seconds
-  const checkServer = async () => {
-    timer = setTimeout(() => setServerSlow(true), 2000);
-    try {
-      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
-    } catch {}
-    clearTimeout(timer);
-    setServerSlow(false);
-  };
-  checkServer();
-  return () => clearTimeout(timer);
-}, []);
 
 const navItems = [
   {
@@ -64,6 +46,24 @@ const settingsItems = [
 ];
 
 export default function HospitalLayout({ children }) {
+  const [serverSlow, setServerSlow] = useState(false);
+  useEffect(() => {
+  let timer;
+  // Check if server responds within 2 seconds
+  const checkServer = async () => {
+    timer = setTimeout(() => setServerSlow(true), 2000);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+    } catch {}
+    clearTimeout(timer);
+    setServerSlow(false);
+  };
+  checkServer();
+  return () => clearTimeout(timer);
+}, []);
+
   const navigate = useNavigate();
   const { hospital } = useHospital();
   const [sidebarOpen, setSidebarOpen] = useState(false);
