@@ -2,6 +2,24 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./DashboardLayout.css";
 import logo from "../assets/logo.png"; 
+const [serverSlow, setServerSlow] = useState(false);
+
+useEffect(() => {
+  let timer;
+  // Check if server responds within 2 seconds
+  const checkServer = async () => {
+    timer = setTimeout(() => setServerSlow(true), 2000);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+    } catch {}
+    clearTimeout(timer);
+    setServerSlow(false);
+  };
+  checkServer();
+  return () => clearTimeout(timer);
+}, []);
 
 const navItems = [
   {
