@@ -59,7 +59,6 @@ const upload = multer({
     }
   },
 });
-});
 
 // ─── GET /api/documents
 router.get("/", auth, async (req, res) => {
