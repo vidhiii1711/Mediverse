@@ -6,7 +6,7 @@ const DocumentSchema = new mongoose.Schema({
     ref: "Patient",
     required: true,
   },
-  name:       { type: String, default: "" ,required:false},       // original filename
+  name:       { type: String, default: "" ,required:true},       // original filename
   size:       { type: String, default: "" },       // e.g. "248 KB"
   url:        { type: String, default: "" },       // file URL (local or cloud)
   uploadedAt: { type: Date, default: Date.now },
