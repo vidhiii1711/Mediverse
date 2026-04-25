@@ -53,7 +53,7 @@ export default function HospitalLayout({ children }) {
   const checkServer = async () => {
     timer = setTimeout(() => setServerSlow(true), 2000);
     try {
-      await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/me`, {
+      await fetch(`${import.meta.env.VITE_API_URL || "https://mediverse-0gys.onrender.com/api"}/auth/me`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
     } catch {}
