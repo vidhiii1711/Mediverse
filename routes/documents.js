@@ -45,27 +45,53 @@ router.post("/upload", auth, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-   const uploadResult = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: "mediverse-documents",
-          resource_type: "auto",  // handles PDFs and images
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-      stream.end(req.file.buffer);
-    });
+   // const uploadResult = await new Promise((resolve, reject) => {
+   //    const stream = cloudinary.uploader.upload_stream(
+   //      {
+   //        folder: "mediverse-documents",
+   //        resource_type: "auto",  // handles PDFs and images
+   //      },
+   //      (error, result) => {
+   //        if (error) reject(error);
+   //        else resolve(result);
+   //      }
+   //    );
+   //    stream.end(req.file.buffer);
+   //  });
 
-    const doc = await Document.create({
-      patient: req.user.id,
-      name:    req.body.name || req.file.originalname || "Document",
-      size:    `${(req.file.size / 1024).toFixed(0)} KB`,
-      type:    req.body.type || "other",
-      url:     uploadResult.secure_url,  // ← permanent https:// Cloudinary URL
-    });
+   //  const doc = await Document.create({
+   //    patient: req.user.id,
+   //    name:    req.body.name || req.file.originalname || "Document",
+   //    size:    `${(req.file.size / 1024).toFixed(0)} KB`,
+   //    type:    req.body.type || "other",
+   //    url:     uploadResult.secure_url,  // ← permanent https:// Cloudinary URL
+   //  });
+    const userTitle = (req.body.name || req.file.originalname || "Document").trim();
+const safeTitle = userTitle.replace(/[^a-zA-Z0-9_-]/g, "_");
+
+const uploadResult = await new Promise((resolve, reject) => {
+  const stream = cloudinary.uploader.upload_stream(
+    {
+      folder: "mediverse-documents",
+      resource_type: "auto",
+      public_id: safeTitle,      // ← file stored in Cloudinary with user's title
+      unique_filename: true,     // ← avoids conflict if same name used twice
+    },
+    (error, result) => {
+      if (error) reject(error);
+      else resolve(result);
+    }
+  );
+  stream.end(req.file.buffer);
+});
+
+const doc = await Document.create({
+  patient: req.user.id,
+  name:    userTitle,            // ← display name = user's entered title
+  size:    `${(req.file.size / 1024).toFixed(0)} KB`,
+  type:    req.body.type || "other",
+  url:     uploadResult.secure_url,
+});
 
     res.status(201).json({ document: doc });
   } catch (err) {
