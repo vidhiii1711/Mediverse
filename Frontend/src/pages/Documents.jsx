@@ -102,8 +102,7 @@ export default function Documents() {
     try {
       const formData = new FormData();
       formData.append("file",  selectedFile);
-      formData.append("title", title.trim());
-      formData.append("name",  selectedFile.name);
+      formData.append("name",  tile.trim());
       formData.append("size",  formatSize(selectedFile.size));
 
       await uploadDocument(formData);
@@ -253,7 +252,7 @@ export default function Documents() {
                   <div className="doc-body">
                     <div className="doc-title">{doc.title || doc.name}</div>
                     <div className="doc-meta">
-                      {doc.name?.split(".").pop()?.toUpperCase() || "FILE"}
+                      {"FILE"}
                       {doc.size ? ` · ${doc.size}` : ""}
                       {doc.uploadedAt ? ` · ${formatDate(doc.uploadedAt)}` : ""}
                     </div>
