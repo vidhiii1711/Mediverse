@@ -102,7 +102,7 @@ export default function Documents() {
     try {
       const formData = new FormData();
       formData.append("file",  selectedFile);
-      formData.append("name",  tile.trim());
+      formData.append("name",  title.trim());
       formData.append("size",  formatSize(selectedFile.size));
 
       await uploadDocument(formData);
