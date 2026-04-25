@@ -7,8 +7,8 @@ const JWT_SECRET = process.env.JWT_SECRET    || "mediverse-secret";
 const GEMINI_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODELS = [
   "gemini-2.0-flash-lite",
-  "gemini-1.5-flash-8b",
-  "gemini-1.5-flash",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
 ];
 
 function auth(req, res, next) {
